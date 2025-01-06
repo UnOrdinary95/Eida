@@ -1,7 +1,7 @@
 import os
 import discord
 from discord import app_commands
-
+from commands.sendpm import sendpm
 
 # Define bot intents
 intents = discord.Intents.default()
@@ -11,6 +11,7 @@ intents.message_content = True
 client_status = "Seeing everything that is currently happening in the world"
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+tree.add_command(sendpm)
 
 # Event triggered when the bot is ready and connected to Discord
 @client.event
