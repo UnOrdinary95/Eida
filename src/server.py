@@ -22,8 +22,13 @@ async def on_ready():
         print("Synchronizing commands...")
         await tree.sync()
         print("Commands synchronized!")
+
+        user = await client.fetch_user(768823850951376896)
+        await user.send('Hi !')
+
     except Exception as e:
         print(f"Error syncing commands: {e}")
+
 
 # Run the bot
 client.run(os.getenv("TOKEN"))
