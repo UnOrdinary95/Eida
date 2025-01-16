@@ -2,14 +2,13 @@ import os
 import discord
 from discord import app_commands
 from commands.sendpm import sendpm
+from src.client import client_status, client
 
 # Define bot intents
 intents = discord.Intents.default()
 intents.message_content = True
 
-# Create bot client
-client_status = "Seeing everything that is currently happening in the world"
-client = discord.Client(intents=intents)
+# Create commandtree
 tree = app_commands.CommandTree(client)
 tree.add_command(sendpm)
 
