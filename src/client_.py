@@ -1,5 +1,5 @@
 import discord
-from src.server import intents
+from src.intents_ import intents
 
 # Create bot client
 client_status = "Seeing everything that is currently happening"
