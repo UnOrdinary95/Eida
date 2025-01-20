@@ -3,3 +3,4 @@ SSH_Keys
 .venv
 .env
 setup.bat
+my_task.py

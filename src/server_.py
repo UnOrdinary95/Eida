@@ -18,10 +18,6 @@ async def on_ready():
         print("Synchronizing commandss...")
         await tree.sync()
         print("Commands synchronized!")
-
-        # user = await client.fetch_user(768823850951376896)
-        # await user.send('Hi !')
-
         sendpm_custom.start()
         print("TASK IS RUNNING!")
     except Exception as e:
