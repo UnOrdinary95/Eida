@@ -1,35 +1,19 @@
-import time
-from datetime import datetime
+from datetime import datetime, time
 from discord.ext import tasks
 from src.client_ import client
 from src.tasks.test import unordinary, message1, message2, list_str_time, time_format
 
 
-@tasks.loop(seconds=0.5)
+@tasks.loop(seconds=1)
 async def sendpm_custom():
-    current_time = datetime.now()
+    current_time = datetime.now().time() # Extracts only the time part (HH:MM:SS)
 
-    if (list_str_time[0] > current_time):
+    if current_time > time(5, 30):
         user = await client.fetch_user(unordinary)
         await user.send(message1)
-        print(datetime.strftime(current_time, time_format), " | MORNING MESSAGE")
-        pass
+        print(current_time, " | MORNING MESSAGE")
 
-
-
-
-
-
-    match time.strftime("%H:%M:%S", current_time):
-        case "04:30:00":
-            user = await client.fetch_user(unordinary)
-            await user.send(message1)
-            print(time.strftime("%H:%M:%S", current_time), " | MORNING MESSAGE")
-        case "21:00:00":
-            user = await client.fetch_user(unordinary)
-            await user.send(message2)
-            print(time.strftime("%H:%M:%S", current_time), " | EVENING MESSAGE")
-        case _:
-            print(time.strftime("%H:%M:%S", current_time))
-
-
+    if current_time > time(22, 00):
+        user = await client.fetch_user(unordinary)
+        await user.send(message2)
+        print(current_time, " | EVENING MESSAGE")
