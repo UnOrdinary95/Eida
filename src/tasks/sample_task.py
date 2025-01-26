@@ -1,19 +1,21 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta, timezone
 from discord.ext import tasks
 from src.client_ import client
-from src.tasks.test import unordinary, message1, message2, list_str_time, time_format
+from src.tasks.test import unordinary, message1, message2
 
 
-@tasks.loop(seconds=1)
-async def sendpm_custom():
-    current_time = datetime.now().time() # Extracts only the time part (HH:MM:SS)
+# Create a timezone object for UTC+1 (same as France/Paris)
+FRANCE_TZ = timezone(timedelta(hours=1))
 
-    if current_time > time(5, 30):
-        user = await client.fetch_user(unordinary)
-        await user.send(message1)
-        print(current_time, " | MORNING MESSAGE")
+# Sample Tasks
+@tasks.loop(time=time(5, 30, tzinfo=FRANCE_TZ))
+async def morning_task():
+    user = await client.fetch_user(unordinary)
+    await user.send(message1)
+    print(datetime.now(), " | MORNING MESSAGE")
 
-    if current_time > time(22, 00):
-        user = await client.fetch_user(unordinary)
-        await user.send(message2)
-        print(current_time, " | EVENING MESSAGE")
+@tasks.loop(time=time(22,00, tzinfo=FRANCE_TZ))
+async def evening_task():
+    user = await client.fetch_user(unordinary)
+    await user.send(message2)
+    print(datetime.now(), " | EVENING MESSAGE")
