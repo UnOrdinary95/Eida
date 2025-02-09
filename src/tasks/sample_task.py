@@ -1,4 +1,5 @@
-from datetime import datetime, time, timedelta, timezone
+from datetime import datetime, time, timedelta, timezone, tzinfo
+import pytz
 from discord.ext import tasks
 from src.client_ import client
 from src.tasks.test import unordinary, message1, message2
@@ -19,3 +20,11 @@ async def evening_task():
     user = await client.fetch_user(unordinary)
     await user.send(message2)
     print(datetime.now(), " | EVENING MESSAGE")
+
+
+@tasks.loop(time=pytz.timezone("Europe/Paris").localize(datetime.combine(datetime.today(), time(11,36))).astimezone(pytz.utc).time())
+async def test_task():
+    user = await client.fetch_user(unordinary)
+    await user.send("TEST TIME ZONE MESSAGE")
+    print(datetime.now(), " | TEST TIME ZONE MESSAGE")
+
