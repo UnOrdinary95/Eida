@@ -21,7 +21,7 @@ async def on_ready():
 
         morning_task.start()
         evening_task.start()
-        test_task.start()
+        # test_task.start()
         print("Task is running.")
     except Exception as e:
         print(f"Error syncing commands: {e}")
