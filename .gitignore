@@ -1,9 +1,6 @@
 SSH_Keys
+sketch
 .idea
 .venv
 .env
-setup.bat
-my_task.py
-.sketch
-.sql
-.DB_config
+vps.bat
