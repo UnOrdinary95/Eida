@@ -2,7 +2,7 @@ import pytz
 
 
 class Account:
-    def __init__(self, user_id: int, timezone: str):
+    def __init__(self, user_id: int, timezone: str = ""):
         self.user_id = user_id
         self.timezone = timezone
 
