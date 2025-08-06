@@ -1,9 +1,19 @@
 import os
+import logging
 import discord
 from discord import app_commands
 # from src.commands.sendpm import sendpm
 from src.tasks.sample_task import morning_task, evening_task, test_task
 from src.client_ import client, client_status
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.FileHandler("bot.log"),
+        logging.StreamHandler()
+    ]
+)
 
 # Create commandtree
 tree = app_commands.CommandTree(client)

@@ -1,6 +1,9 @@
 SSH_Keys
 sketch
 .idea
+.vscode
 .venv
 .env
 vps.bat
+src/tasks/test.py
+__pycache__
