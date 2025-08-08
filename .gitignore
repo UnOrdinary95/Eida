@@ -7,3 +7,4 @@ sketch
 vps.bat
 src/tasks/test.py
 __pycache__
+bot.log
