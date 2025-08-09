@@ -1,5 +1,5 @@
 CREATE TABLE Account(
-   user_id INT PRIMARY KEY,
+   user_id BIGINT PRIMARY KEY,
    timezone VARCHAR(40)
 );
 
