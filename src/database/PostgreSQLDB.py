@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+DBUSER = os.getenv("DBUSER")
+DBPASS = os.getenv("PASSWORD")
+DBHOST = os.getenv("HOSTNAME2")
+DBNAME = os.getenv("DBNAME") 
+
 
 class PostgreSQLDB:
     def __init__(self):
@@ -14,10 +19,10 @@ class PostgreSQLDB:
     def connect(self):
         try:
             self.connection = psycopg.connect(
-                user=os.getenv("DBUSER"),
-                password=os.getenv("PASSWORD"),
-                host=os.getenv("HOSTNAME2"),
-                dbname=os.getenv("DBNAME"),
+                user=DBUSER,
+                password=DBPASS,
+                host=DBHOST,
+                dbname=DBNAME,
             )
         except psycopg.DatabaseError as e:
             logger.error(f"Error while connecting to database: {e}")
