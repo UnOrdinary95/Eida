@@ -15,12 +15,13 @@ class SetzModal(discord.ui.Modal, title="Timezone Setup"):
     tz_input = discord.ui.TextInput(
         label="Timezone",
         placeholder="Europe/Paris",
+        style=discord.TextStyle.short,
         max_length=40,
         required=True
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        if AccountDAO.setTimezone(interaction.user.id, self.tz_input.value):
+        if AccountDAO.set_timezone(interaction.user.id, self.tz_input.value):
             await interaction.response.send_message(embed=self.embeds_submit["success"], ephemeral=True)
         else:
             await interaction.response.send_message(embed=self.embeds_submit["error"], ephemeral=True)

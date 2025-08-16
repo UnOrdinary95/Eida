@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class AccountDAO:
     @staticmethod
-    def addAccount(discord_uid: int) -> bool:
+    def add_account(discord_uid: int) -> bool:
         try:
             with psycopg.connect(
                 user=psqldb.DBUSER,
@@ -31,9 +31,8 @@ class AccountDAO:
             return False
 
     @staticmethod
-    def setTimezone(discord_uid: int, timezone: str) -> bool:
+    def set_timezone(discord_uid: int, timezone: str) -> bool:
         if not Account.is_a_timezone(timezone):
-            logger.error(f"Error updating user timezone: timezone ({timezone}) not supported")
             return False
         
         try:
@@ -52,7 +51,7 @@ class AccountDAO:
             return False
 
     @staticmethod
-    def getAccountById(discord_uid: int) -> Optional[Tuple]:
+    def account_exists(discord_uid: int) -> Optional[Tuple]:
         try:
             with psycopg.connect(
                 user=psqldb.DBUSER,
