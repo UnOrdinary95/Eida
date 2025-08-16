@@ -71,9 +71,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
             )
             return
 
-        if self.date_input.value == "":
-            self.date_input.value = datetime.now().strftime("%d/%m/%Y")
-        if not Reminder.validate_date(self.date_input.value):
+        if not Reminder.validate_date(self.date_input.value) and self.date_input.value != "":
             await interaction.response.send_message(
                 "Invalid date format. Please use DD/MM/YYYY format.", ephemeral=True
             )
@@ -96,7 +94,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
             interaction.user.id,
             self.name_input.value,
             self.time_input.value,
-            self.date_input.value,
+            datetime.now().strftime("%d/%m/%Y") if self.date_input.value == "" else self.date_input.value,
             self.intervals_input.value,
             self.message_input.value,
         )
