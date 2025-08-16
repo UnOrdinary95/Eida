@@ -46,7 +46,24 @@ class ReminderDAO:
             return True
         except psycopg.DatabaseError as e:
             logger.error(f"Error updating reminder message for user_id={discord_uid} and reminder_name={reminder_name}: {e}")
-            return False 
+            return False
+
+    @staticmethod
+    def set_reminder_time(discord_uid: int, reminder_name: str, reminder_time: str) -> bool:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute("UPDATE reminder SET r_time = %s WHERE user_id = %s AND r_name = %s", (reminder_time, discord_uid, reminder_name))
+            logger.info(f"Reminder time updated for user_id={discord_uid} and reminder_name={reminder_name}")
+            return True
+        except psycopg.DatabaseError as e:
+            logger.error(f"Error updating reminder time for user_id={discord_uid} and reminder_name={reminder_name}: {e}")
+            return False
 
     @staticmethod
     def reminder_exists(discord_uid: int, reminder_name: str) -> Optional[Tuple]:
