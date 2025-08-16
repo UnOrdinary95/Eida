@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class Eida(commands.Bot):
     async def setup_hook(self):
-        extensions = ["config", "dashboard", "help", "reminder"]
+        extensions = ["configCog", "dashboardCog", "helpCog", "reminderCog"]
         for extension in extensions:
             await self.load_extension(f"src.cogs.{extension}")
 
