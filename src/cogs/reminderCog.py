@@ -65,6 +65,20 @@ class ReminderCog(commands.Cog):
                 description="Unexpected error occurred. Please try again later.",
             ),
         }
+        self.embeds_setintervals = {
+            "success": discord.Embed(
+                title="✅ Reminder Intervals Updated",
+                description="Reminder intervals updated successfully!",
+            ),
+            "error": discord.Embed(
+                title="❌ Reminder Intervals Update",
+                description="An error occurred while updating the reminder intervals.",
+            ),
+            "warning": discord.Embed(
+                title="⚠️ Reminder Intervals Update",
+                description="Unexpected error occurred. Please try again later.",
+            ),
+        }
 
     @app_commands.command(
         name="remindme", description="Remind yourself about something later."
@@ -211,6 +225,50 @@ class ReminderCog(commands.Cog):
                 embed=self.embeds_setname["warning"], ephemeral=True
             )
             logger.error(f"Unexpected error occurred while setting reminder name: {e}")
+
+    @app_commands.command(
+        name="setintervals", description="Set the intervals for a reminder."
+    )
+    async def set_intervals(
+        self, interaction: discord.Interaction, reminder_name: str, intervals: str
+    ):
+        if not AccountDAO.account_exists(interaction.user.id):
+            await interaction.response.send_message(
+                embed=self.embeds_no_account, ephemeral=True
+            )
+            return
+
+        if not ReminderDAO.reminder_exists(interaction.user.id, reminder_name):
+            await interaction.response.send_message(
+                embed=self.embeds_no_reminder, ephemeral=True
+            )
+            return
+
+        if not Reminder.validate_intervals(intervals):
+            await interaction.response.send_message(
+                "Invalid intervals format. Please check your input.", ephemeral=True
+            )
+            return
+
+        try:
+            success = ReminderDAO.set_reminder_intervals(
+                interaction.user.id, reminder_name, intervals
+            )
+            if success:
+                await interaction.response.send_message(
+                    embed=self.embeds_setintervals["success"], ephemeral=True
+                )
+            else:
+                await interaction.response.send_message(
+                    embed=self.embeds_setintervals["error"], ephemeral=True
+                )
+        except Exception as e:
+            await interaction.response.send_message(
+                embed=self.embeds_setintervals["warning"], ephemeral=True
+            )
+            logger.error(
+                f"Unexpected error occurred while setting reminder intervals: {e}"
+            )
 
 
 async def setup(bot):

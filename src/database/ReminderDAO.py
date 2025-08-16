@@ -171,6 +171,37 @@ class ReminderDAO:
             return False
 
     @staticmethod
+    def set_reminder_intervals(
+        discord_uid: int, reminder_name: str, reminder_intervals: str
+    ) -> bool:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME,
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE reminder SET r_intervals = %s WHERE user_id = %s AND r_name = %s",
+                        (reminder_intervals, discord_uid, reminder_name),
+                    )
+                    if cursor.rowcount == 0:
+                        logger.warning(
+                            f"No reminder found to update for user_id={discord_uid} and reminder_name={reminder_name}"
+                        )
+                        return False
+            logger.info(
+                f"Reminder intervals updated for user_id={discord_uid} and reminder_name={reminder_name}"
+            )
+            return True
+        except psycopg.DatabaseError as e:
+            logger.error(
+                f"Error updating reminder intervals for user_id={discord_uid} and reminder_name={reminder_name}: {e}"
+            )
+            return False
+
+    @staticmethod
     def reminder_exists(discord_uid: int, reminder_name: str) -> Optional[Tuple]:
         try:
             with psycopg.connect(
