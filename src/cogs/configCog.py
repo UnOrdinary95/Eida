@@ -58,7 +58,7 @@ class Config(commands.Cog):
             logger.error(f"Unexpected error occurred while creating account: {e}")
 
     @app_commands.command(
-        name="setz", description="Set your timezone for accurate reminders."
+        name="settimezone", description="Set your timezone for accurate reminders."
     )
     async def set_timezone(self, interaction: discord.Interaction):
         if AccountDAO.account_exists(interaction.user.id):
