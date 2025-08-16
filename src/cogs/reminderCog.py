@@ -7,6 +7,7 @@ from src.database.AccountDAO import AccountDAO
 from src.database.ReminderDAO import ReminderDAO
 from src.modals.setmsgModal import SetMsgModal
 from src.models.Reminder import Reminder
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,20 @@ class ReminderCog(commands.Cog):
             ),
             "warning": discord.Embed(
                 title="⚠️ Reminder Time Update",
+                description="Unexpected error occurred. Please try again later.",
+            ),
+        }
+        self.embeds_setd = {
+            "success": discord.Embed(
+                title="✅ Reminder Date Updated",
+                description="Reminder date updated successfully!",
+            ),
+            "error": discord.Embed(
+                title="❌ Reminder Date Update",
+                description="An error occurred while updating the reminder date.",
+            ),
+            "warning": discord.Embed(
+                title="⚠️ Reminder Date Update",
                 description="Unexpected error occurred. Please try again later.",
             ),
         }
@@ -104,6 +119,50 @@ class ReminderCog(commands.Cog):
                 embed=self.embeds_sett["warning"], ephemeral=True
             )
             logger.error(f"Unexpected error occurred while setting reminder time: {e}")
+
+    @app_commands.command(name="setd", description="Set the date for a reminder.")
+    async def set_date(
+        self, interaction: discord.Interaction, reminder_name: str, date: str = ""
+    ):
+        if not AccountDAO.account_exists(interaction.user.id):
+            await interaction.response.send_message(
+                embed=self.embeds_no_account, ephemeral=True
+            )
+            return
+
+        if not ReminderDAO.reminder_exists(interaction.user.id, reminder_name):
+            await interaction.response.send_message(
+                embed=self.embeds_no_reminder, ephemeral=True
+            )
+            return
+
+        if date == "":
+            date = datetime.now().strftime("%d/%m/%Y")
+        if not Reminder.validate_date(date):
+            await interaction.response.send_message(
+                "Invalid date format. Please use DD/MM/YYYY format.", ephemeral=True
+            )
+            return
+
+        try:
+            success = ReminderDAO.set_reminder_date(
+                interaction.user.id,
+                reminder_name,
+                datetime.strptime(date, "%d/%m/%Y").date(),
+            )
+            if success:
+                await interaction.response.send_message(
+                    embed=self.embeds_setd["success"], ephemeral=True
+                )
+            else:
+                await interaction.response.send_message(
+                    embed=self.embeds_setd["error"], ephemeral=True
+                )
+        except Exception as e:
+            await interaction.response.send_message(
+                embed=self.embeds_setd["warning"], ephemeral=True
+            )
+            logger.error(f"Unexpected error occurred while setting reminder date: {e}")
 
 
 async def setup(bot):
