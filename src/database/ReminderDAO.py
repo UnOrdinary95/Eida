@@ -200,7 +200,7 @@ class ReminderDAO:
                 f"Error updating reminder intervals for user_id={discord_uid} and reminder_name={reminder_name}: {e}"
             )
             return False
-        
+
     @staticmethod
     def delete_reminder(discord_uid: int, reminder_name: str) -> bool:
         try:
@@ -229,7 +229,7 @@ class ReminderDAO:
                 f"Error deleting reminder for user_id={discord_uid} and reminder_name={reminder_name}: {e}"
             )
             return False
-        
+
     @staticmethod
     def toggle_reminder_status(discord_uid: int, reminder_name: str) -> bool:
         try:
@@ -258,7 +258,7 @@ class ReminderDAO:
                 f"Error toggling reminder status for user_id={discord_uid} and reminder_name={reminder_name}: {e}"
             )
             return False
-            
+
     @staticmethod
     def reminder_exists(discord_uid: int, reminder_name: str) -> Optional[Tuple]:
         try:
@@ -288,3 +288,91 @@ class ReminderDAO:
                 f"Error getting reminder for user_id={discord_uid} and reminder_name={reminder_name}: {e}"
             )
             return None
+
+    @staticmethod
+    def get_reminder_count(discord_uid: int) -> int:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME,
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT COUNT(*) FROM reminder WHERE user_id = %s",
+                        (discord_uid,),
+                    )
+                    result = cursor.fetchone()[0]
+            logger.info(f"Reminder count retrieved for user_id={discord_uid}")
+            return result
+        except psycopg.DatabaseError as e:
+            logger.error(f"Error getting reminder count for user_id={discord_uid}: {e}")
+            return 0
+
+    @staticmethod
+    def get_reminders_by_offset(
+        discord_uid: int, offset: int, page_size: int
+    ) -> Optional[Tuple]:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME,
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT is_active, r_name, r_date, r_time FROM reminder WHERE user_id = %s ORDER BY r_name OFFSET %s LIMIT %s",
+                        (discord_uid, offset, page_size),
+                    )
+                    result = cursor.fetchall()
+            logger.info(f"Reminder retrieved for user_id={discord_uid}")
+            return result
+        except psycopg.DatabaseError as e:
+            logger.error(f"Error getting reminder for user_id={discord_uid}: {e}")
+            return None
+
+    @staticmethod
+    def get_reminders_by_offset_activity(
+        discord_uid: int, offset: int, page_size: int, activity: bool
+    ) -> Optional[Tuple]:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME,
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT is_active, r_name, r_date, r_time FROM reminder WHERE user_id = %s AND is_active = %s ORDER BY r_name OFFSET %s LIMIT %s",
+                        (discord_uid, activity, offset, page_size),
+                    )
+                    result = cursor.fetchall()
+            logger.info(f"Reminder retrieved for user_id={discord_uid}")
+            return result
+        except psycopg.DatabaseError as e:
+            logger.error(f"Error getting reminder for user_id={discord_uid}: {e}")
+            return None
+
+    @staticmethod
+    def get_reminder_count_by_activity(discord_uid: int, activity: bool) -> int:
+        try:
+            with psycopg.connect(
+                user=psqldb.DBUSER,
+                password=psqldb.DBPASS,
+                host=psqldb.DBHOST,
+                dbname=psqldb.DBNAME,
+            ) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT COUNT(*) FROM reminder WHERE user_id = %s AND is_active = %s",
+                        (discord_uid, activity),
+                    )
+                    result = cursor.fetchone()[0]
+            logger.info(f"Reminder count by activity retrieved for user_id={discord_uid}, activity={activity}")
+            return result
+        except psycopg.DatabaseError as e:
+            logger.error(f"Error getting reminder count by activity for user_id={discord_uid}, activity={activity}: {e}")
+            return 0
