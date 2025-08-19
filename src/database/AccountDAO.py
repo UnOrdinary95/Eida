@@ -1,6 +1,6 @@
 import psycopg
 import logging
-from typing import Optional, Tuple
+from typing import Optional
 from src.models.Account import Account
 from psycopg.errors import UniqueViolation
 import src.database.PostgreSQLDB as psqldb
@@ -51,7 +51,7 @@ class AccountDAO:
             return False
 
     @staticmethod
-    def account_exists(discord_uid: int) -> Optional[Tuple]:
+    def account_exists(discord_uid: int) -> Optional[Account]:
         try:
             with psycopg.connect(
                 user=psqldb.DBUSER,
@@ -63,10 +63,12 @@ class AccountDAO:
                     cursor.execute("SELECT * FROM account WHERE user_id = %s", (discord_uid,))
                     result = cursor.fetchone()
             if result:
+                user_id, timezone = result
                 logger.info(f"User info retrieved for user_id={discord_uid}")
+                return Account(user_id, timezone)
             else:
                 logger.info(f"No account found for user_id={discord_uid}")
-            return result
+                return None
         except psycopg.DatabaseError as e:
             logger.error(f"Error getting account for user_id={discord_uid}: {e}")
             return None
