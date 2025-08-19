@@ -175,7 +175,7 @@ class Dashboard(commands.Cog):
 
         embed = discord.Embed(
             title=reminder_name,
-            description=f"--------------------------------------------------\nDate : {reminder[4]}\nTime : {reminder[3]}\nInterval : {self.parse_interval_to_human(reminder[5])}\nStatus : {'Active' if reminder[6] else 'Inactive'}\n--------------------------------------------------\n{reminder[2] if reminder[2] else 'No description'}",
+            description=f"--------------------------------------------------\nDate : {reminder.date}\nTime : {reminder.time}\nInterval : {self.parse_interval_to_human(reminder.intervals)}\nStatus : {'Active' if reminder.status else 'Inactive'}\n--------------------------------------------------\n{reminder.message if reminder.message else 'No description'}",
         )
         await interaction.response.send_message(
             embed=embed,

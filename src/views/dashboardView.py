@@ -60,7 +60,7 @@ class DashboardView(discord.ui.View):
 
         content = ""
         for reminder in reminders:
-            content += f"{"✅" if reminder[0] else "❌"} - {reminder[1]} | {reminder[2]} | {reminder[3]}\n"
+            content += f"{"✅" if reminder.is_active else "❌"} - {reminder.name} | {reminder.date} | {reminder.time}\n"
 
         return content if content else "No content"
 

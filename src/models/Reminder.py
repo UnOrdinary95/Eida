@@ -15,21 +15,19 @@ class Reminder:
         intervals: str,
         message: str,
         reminder_id: int = None,
+        status: bool = True,
     ):
         self.user_id = user_id
         self.reminder_name = reminder_name
         self.time = time
         if date == "":
-            self.date = datetime.now().date()
+            self.date = datetime.now().date().strftime("%d/%m/%Y")
         else:
-            try:
-                self.date = datetime.strptime(date, "%d/%m/%Y").date()
-            except ValueError:
-                logger.error(f"Invalid date format for {date}, using current date")
-                self.date = datetime.now().date()
+            self.date = date
         self.intervals = intervals
         self.message = message
         self.reminder_id = reminder_id
+        self.status = status
 
     @staticmethod
     def validate_time(time: str) -> bool:
