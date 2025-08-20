@@ -8,6 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 class RemindMeModal(discord.ui.Modal, title="New Reminder"):
+    """
+    Modal form for reminder creation with comprehensive validation.
+    Pre-validates input before database interaction for better user experience.
+    """
+    
     embeds_remind_me = {
         "success": discord.Embed(
             title="✅ Reminder Creation", description="Reminder created successfully!"
@@ -35,6 +40,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
         max_length=5,
         required=True,
     )
+    # Optional field with today's date as visual example
     date_input = discord.ui.TextInput(
         label="Date (default: today)",
         placeholder=datetime.now().strftime("%d/%m/%Y"),
@@ -42,6 +48,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
         max_length=10,
         required=False,
     )
+    # Show examples of both interval patterns for user guidance
     intervals_input = discord.ui.TextInput(
         label="Intervals (default: None)",
         placeholder="e15m2h1d | w:* | w:tue,fri,mon,sat",
@@ -58,7 +65,12 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        # Validate all inputs using the Reminder model validation methods
+        """
+        Process form submission with client-side validation before database interaction.
+        Early validation provides immediate feedback and prevents unnecessary database calls.
+        """
+        
+        # Validate each field individually to provide specific error messages
         if not Reminder.validate_reminder_name(self.name_input.value):
             await interaction.response.send_message(
                 "Invalid reminder name. Maximum 50 characters allowed.", ephemeral=True
@@ -71,6 +83,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
             )
             return
 
+        # Special handling for optional date field - empty string is valid
         if not Reminder.validate_date(self.date_input.value) and self.date_input.value != "":
             await interaction.response.send_message(
                 "Invalid date format. Please use DD/MM/YYYY format.", ephemeral=True
@@ -89,11 +102,12 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
             )
             return
 
-        # If all validations pass, send success response
+        # Create reminder object only after all validations pass
         reminder = Reminder(
             interaction.user.id,
             self.name_input.value,
             self.time_input.value,
+            # Apply default date logic consistently with Reminder model
             datetime.now().strftime("%d/%m/%Y") if self.date_input.value == "" else self.date_input.value,
             self.intervals_input.value,
             self.message_input.value,

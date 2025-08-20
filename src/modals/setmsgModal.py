@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class SetMsgModal(discord.ui.Modal, title="Edit Reminder Message"):
+    """Modal for editing existing reminder messages."""
+
     def __init__(self, reminder_name: str):
         super().__init__()
         self.reminder_name = reminder_name
@@ -26,14 +28,20 @@ class SetMsgModal(discord.ui.Modal, title="Edit Reminder Message"):
         }
 
     message_input = discord.ui.TextInput(
-        label="Message (default: None)",
+        label="Message",
         placeholder="Hello world!\nI'm a reminder!",
         style=discord.TextStyle.long,
         max_length=1024,
-        required=False,
+        required=True,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
+        """
+        Process message update with validation.
+        Client-side validation provides immediate feedback for single-field update.
+        """
+
+        # Validate message content before database interaction
         if not Reminder.validate_message(self.message_input.value):
             await interaction.response.send_message(
                 "Invalid message or no message provided. Maximum 1024 characters allowed.",

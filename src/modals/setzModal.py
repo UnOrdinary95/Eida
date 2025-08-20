@@ -1,27 +1,36 @@
 import discord
 from src.database.AccountDAO import AccountDAO
 
+
 class SetzModal(discord.ui.Modal, title="Timezone Setup"):
+    """Simple modal for timezone configuration."""
+
     embeds_submit = {
         "success": discord.Embed(
-            title="✅ Timezone Setup",
-            description="Timezone changed successfully!"
+            title="✅ Timezone Setup", description="Timezone changed successfully!"
         ),
         "error": discord.Embed(
             title="❌ Timezone Setup",
-            description="You entered an invalid timezone or an unexpected error occurred. Please try again later."
-        )
+            description="You entered an invalid timezone or an unexpected error occurred. Please try again later.",
+        ),
     }
+
+    # 40 chars covers longest timezone names
     tz_input = discord.ui.TextInput(
         label="Timezone",
         placeholder="Europe/Paris",
         style=discord.TextStyle.short,
         max_length=40,
-        required=True
+        required=True,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
+        """Handle timezone setting with server-side validation."""
         if AccountDAO.set_timezone(interaction.user.id, self.tz_input.value):
-            await interaction.response.send_message(embed=self.embeds_submit["success"], ephemeral=True)
+            await interaction.response.send_message(
+                embed=self.embeds_submit["success"], ephemeral=True
+            )
         else:
-            await interaction.response.send_message(embed=self.embeds_submit["error"], ephemeral=True)
+            await interaction.response.send_message(
+                embed=self.embeds_submit["error"], ephemeral=True
+            )
