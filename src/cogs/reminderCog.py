@@ -204,7 +204,7 @@ class ReminderCog(commands.Cog):
             success = ReminderDAO.set_reminder_date(
                 interaction.user.id,
                 reminder_name,
-                datetime.strptime(date, "%d/%m/%Y").date(),
+                date,
             )
             if success:
                 await interaction.response.send_message(
@@ -330,8 +330,13 @@ class ReminderCog(commands.Cog):
             )
             logger.error(f"Unexpected error occurred while deleting reminder: {e}")
 
-    @app_commands.command(name="togglerm", description="Toggle a reminder on/off (activate or deactivate).")
-    async def set_reminder_status(self, interaction: discord.Interaction, reminder_name: str):
+    @app_commands.command(
+        name="togglerm",
+        description="Toggle a reminder on/off (activate or deactivate).",
+    )
+    async def set_reminder_status(
+        self, interaction: discord.Interaction, reminder_name: str
+    ):
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -343,9 +348,11 @@ class ReminderCog(commands.Cog):
                 embed=self.embeds_no_reminder, ephemeral=True
             )
             return
-        
+
         try:
-            success = ReminderDAO.toggle_reminder_status(interaction.user.id, reminder_name)
+            success = ReminderDAO.toggle_reminder_status(
+                interaction.user.id, reminder_name
+            )
             if success:
                 await interaction.response.send_message(
                     embed=self.embeds_togglerm["success"], ephemeral=True
@@ -359,7 +366,6 @@ class ReminderCog(commands.Cog):
                 embed=self.embeds_togglerm["warning"], ephemeral=True
             )
             logger.error(f"Unexpected error occurred while toggling reminder: {e}")
-            
 
 
 async def setup(bot):
