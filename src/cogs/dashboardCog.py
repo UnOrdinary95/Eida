@@ -18,6 +18,78 @@ class Dashboard(commands.Cog):
             description="There is no reminder with this name.",
         )
 
+    @app_commands.command(
+        name="dashboard", description="Show your dashboard. option: active | inactive"
+    )
+    async def dashboard(self, interaction: discord.Interaction, option: str = None):
+        if not AccountDAO.account_exists(interaction.user.id):
+            await interaction.response.send_message(
+                embed=self.embeds_no_account, ephemeral=True
+            )
+            return
+
+        match option:
+            case None:
+                dashboard_view = DashboardView(interaction.user.id)
+                content, current, total = dashboard_view.get_current_page_info()
+
+                embed = discord.Embed(
+                    title=f"{interaction.user.nick}", description=content
+                )
+                embed.set_footer(text=f"Page {current}/{total}")
+
+                await interaction.response.send_message(
+                    embed=embed, view=dashboard_view, ephemeral=True
+                )
+            case "active":
+                dashboard_view = DashboardView(interaction.user.id, True)
+                content, current, total = dashboard_view.get_current_page_info()
+
+                embed = discord.Embed(
+                    title=f"{interaction.user.nick}", description=content
+                )
+                embed.set_footer(text=f"Page {current}/{total}")
+
+                await interaction.response.send_message(
+                    embed=embed, view=dashboard_view, ephemeral=True
+                )
+            case "inactive":
+                dashboard_view = DashboardView(interaction.user.id, False)
+                content, current, total = dashboard_view.get_current_page_info()
+
+                embed = discord.Embed(
+                    title=f"{interaction.user.nick}", description=content
+                )
+                embed.set_footer(text=f"Page {current}/{total}")
+
+                await interaction.response.send_message(
+                    embed=embed, view=dashboard_view, ephemeral=True
+                )
+
+    @app_commands.command(name="showrm", description="Show a specific reminder.")
+    async def show_reminder(self, interaction: discord.Interaction, reminder_name: str):
+        if not AccountDAO.account_exists(interaction.user.id):
+            await interaction.response.send_message(
+                embed=self.embeds_no_account, ephemeral=True
+            )
+            return
+
+        reminder = ReminderDAO.reminder_exists(interaction.user.id, reminder_name)
+        if not reminder:
+            await interaction.response.send_message(
+                embed=self.embeds_no_reminder, ephemeral=True
+            )
+            return
+
+        embed = discord.Embed(
+            title=reminder_name,
+            description=f"--------------------------------------------------\nDate : {reminder.date}\nTime : {reminder.time}\nInterval : {self.parse_interval_to_human(reminder.intervals)}\nStatus : {'Active' if reminder.status else 'Inactive'}\n--------------------------------------------------\n{reminder.message if reminder.message else 'No description'}",
+        )
+        await interaction.response.send_message(
+            embed=embed,
+            ephemeral=True,
+        )
+
     def parse_interval_to_human(self, interval: str) -> str:
         """
         Convert interval string to human-readable English format.
@@ -109,78 +181,6 @@ class Dashboard(commands.Cog):
                     return f"Every {', '.join(parts[:-1])} and {parts[-1]}"
 
         return f"Invalid interval format: {interval}"
-
-    @app_commands.command(
-        name="dashboard", description="Show your dashboard. option: active | inactive"
-    )
-    async def dashboard(self, interaction: discord.Interaction, option: str = None):
-        if not AccountDAO.account_exists(interaction.user.id):
-            await interaction.response.send_message(
-                embed=self.embeds_no_account, ephemeral=True
-            )
-            return
-
-        match option:
-            case None:
-                dashboard_view = DashboardView(interaction.user.id)
-                content, current, total = dashboard_view.get_current_page_info()
-
-                embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
-                )
-                embed.set_footer(text=f"Page {current}/{total}")
-
-                await interaction.response.send_message(
-                    embed=embed, view=dashboard_view, ephemeral=True
-                )
-            case "active":
-                dashboard_view = DashboardView(interaction.user.id, True)
-                content, current, total = dashboard_view.get_current_page_info()
-
-                embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
-                )
-                embed.set_footer(text=f"Page {current}/{total}")
-
-                await interaction.response.send_message(
-                    embed=embed, view=dashboard_view, ephemeral=True
-                )
-            case "inactive":
-                dashboard_view = DashboardView(interaction.user.id, False)
-                content, current, total = dashboard_view.get_current_page_info()
-
-                embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
-                )
-                embed.set_footer(text=f"Page {current}/{total}")
-
-                await interaction.response.send_message(
-                    embed=embed, view=dashboard_view, ephemeral=True
-                )
-
-    @app_commands.command(name="showrm", description="Show a specific reminder.")
-    async def show_reminder(self, interaction: discord.Interaction, reminder_name: str):
-        if not AccountDAO.account_exists(interaction.user.id):
-            await interaction.response.send_message(
-                embed=self.embeds_no_account, ephemeral=True
-            )
-            return
-
-        reminder = ReminderDAO.reminder_exists(interaction.user.id, reminder_name)
-        if not reminder:
-            await interaction.response.send_message(
-                embed=self.embeds_no_reminder, ephemeral=True
-            )
-            return
-
-        embed = discord.Embed(
-            title=reminder_name,
-            description=f"--------------------------------------------------\nDate : {reminder.date}\nTime : {reminder.time}\nInterval : {self.parse_interval_to_human(reminder.intervals)}\nStatus : {'Active' if reminder.status else 'Inactive'}\n--------------------------------------------------\n{reminder.message if reminder.message else 'No description'}",
-        )
-        await interaction.response.send_message(
-            embed=embed,
-            ephemeral=True,
-        )
 
 
 async def setup(bot):
