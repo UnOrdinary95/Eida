@@ -36,7 +36,8 @@ class SetMsgModal(discord.ui.Modal, title="Edit Reminder Message"):
     async def on_submit(self, interaction: discord.Interaction):
         if not Reminder.validate_message(self.message_input.value):
             await interaction.response.send_message(
-                "Invalid message. Maximum 1024 characters allowed.", ephemeral=True
+                "Invalid message or no message provided. Maximum 1024 characters allowed.",
+                ephemeral=True,
             )
             return
 

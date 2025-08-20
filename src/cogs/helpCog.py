@@ -45,7 +45,7 @@ class Help(commands.Cog):
             name="➕ Add Reminders",
             value=(
                 "`/remindme {HH:MM} {DD:MM:YYYY} {INTERVALS} {MESSAGE} {NAME}`\n"
-                "ℹ️ NOTE : (DATE, INTERVALS and MESSAGE are optional)"
+                "ℹ️ NOTE : (DATE and INTERVALS are optional)"
             ),
             inline=True,
         )

@@ -104,7 +104,7 @@ class Reminder:
         """Validate message (max 1024 chars)"""
         if message == "":
             logger.error("No message provided")
-            return True
+            return False
 
         if len(message) > 1024:
             logger.error("Message too long (max 1024 chars)")

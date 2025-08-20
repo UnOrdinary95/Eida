@@ -50,11 +50,11 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
         required=False,
     )
     message_input = discord.ui.TextInput(
-        label="Message (default: None)",
+        label="Message",
         placeholder="Hello world!\nI'm a reminder!",
         style=discord.TextStyle.long,
         max_length=1024,
-        required=False,
+        required=True,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
@@ -85,7 +85,7 @@ class RemindMeModal(discord.ui.Modal, title="New Reminder"):
 
         if not Reminder.validate_message(self.message_input.value):
             await interaction.response.send_message(
-                "Invalid message. Maximum 1024 characters allowed.", ephemeral=True
+                "Invalid message or no message provided. Maximum 1024 characters allowed.", ephemeral=True
             )
             return
 
