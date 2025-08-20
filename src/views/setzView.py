@@ -3,6 +3,8 @@ from src.modals.setzModal import SetzModal
 
 
 class SetzView(discord.ui.View):
+    """Simple view for initiating timezone configuration through a modal"""
+    
     def __init__(self):
         super().__init__()
 
