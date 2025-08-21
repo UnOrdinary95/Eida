@@ -10,7 +10,7 @@ class Dashboard(commands.Cog):
     """
     Dashboard commands for viewing and managing user reminders.
     """
-    
+
     def __init__(self, bot):
         self.bot = bot
         self.embeds_no_account = discord.Embed(
@@ -44,7 +44,7 @@ class Dashboard(commands.Cog):
                 content, current, total = dashboard_view.get_current_page_info()
 
                 embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
+                    title=f"{interaction.user.name}", description=content
                 )
                 embed.set_footer(text=f"Page {current}/{total}")
 
@@ -57,7 +57,7 @@ class Dashboard(commands.Cog):
                 content, current, total = dashboard_view.get_current_page_info()
 
                 embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
+                    title=f"{interaction.user.name}", description=content
                 )
                 embed.set_footer(text=f"Page {current}/{total}")
 
@@ -70,7 +70,7 @@ class Dashboard(commands.Cog):
                 content, current, total = dashboard_view.get_current_page_info()
 
                 embed = discord.Embed(
-                    title=f"{interaction.user.nick}", description=content
+                    title=f"{interaction.user.name}", description=content
                 )
                 embed.set_footer(text=f"Page {current}/{total}")
 

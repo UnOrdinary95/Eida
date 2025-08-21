@@ -86,7 +86,7 @@ class DashboardView(discord.ui.View):
             self.page = 0
             self.update_buttons()
             content, current, total = self.get_current_page_info()
-            embed = discord.Embed(title=f"{interaction.user.nick}", description=content)
+            embed = discord.Embed(title=f"{interaction.user.name}", description=content)
             embed.set_footer(text=f"Page {current}/{total}")
             await interaction.response.edit_message(embed=embed, view=self)
 
@@ -98,7 +98,7 @@ class DashboardView(discord.ui.View):
             self.page -= 1
             self.update_buttons()
             content, current, total = self.get_current_page_info()
-            embed = discord.Embed(title=f"{interaction.user.nick}", description=content)
+            embed = discord.Embed(title=f"{interaction.user.name}", description=content)
             embed.set_footer(text=f"Page {current}/{total}")
             await interaction.response.edit_message(embed=embed, view=self)
 
@@ -110,7 +110,7 @@ class DashboardView(discord.ui.View):
             self.page += 1
             self.update_buttons()
             content, current, total = self.get_current_page_info()
-            embed = discord.Embed(title=f"{interaction.user.nick}", description=content)
+            embed = discord.Embed(title=f"{interaction.user.name}", description=content)
             embed.set_footer(text=f"Page {current}/{total}")
             await interaction.response.edit_message(embed=embed, view=self)
 
@@ -123,6 +123,6 @@ class DashboardView(discord.ui.View):
             self.page = last_page
             self.update_buttons()
             content, current, total = self.get_current_page_info()
-            embed = discord.Embed(title=f"{interaction.user.nick}", description=content)
+            embed = discord.Embed(title=f"{interaction.user.name}", description=content)
             embed.set_footer(text=f"Page {current}/{total}")
             await interaction.response.edit_message(embed=embed, view=self)
