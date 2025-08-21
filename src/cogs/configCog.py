@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class Config(commands.Cog):
+    """
+    Configuration commands for user account setup and timezone management.
+    """
+    
     def __init__(self, bot):
         self.bot = bot
         self.embeds_create_account = {
@@ -25,6 +29,7 @@ class Config(commands.Cog):
             ),
         }
         self.embeds_set_timezone = {
+            # Provide timezone reference link to help users find correct timezone string
             "url": discord.Embed(
                 title="🕰️ Timezone Setup",
                 description="You can see the complete list of timezones in the link below ⬇️\n"
@@ -41,6 +46,9 @@ class Config(commands.Cog):
         name="c", description="Create your personal reminder account."
     )
     async def create_account(self, interaction: discord.Interaction):
+        """
+        Initialize user account for reminder system access.
+        """
         try:
             success = AccountDAO.add_account(interaction.user.id)
             if success:
@@ -61,6 +69,9 @@ class Config(commands.Cog):
         name="settimezone", description="Set your timezone for accurate reminders."
     )
     async def set_timezone(self, interaction: discord.Interaction):
+        """
+        Configure user timezone for accurate reminder scheduling.
+        """
         if AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_set_timezone["url"], view=SetzView(), ephemeral=True
@@ -72,4 +83,5 @@ class Config(commands.Cog):
 
 
 async def setup(bot):
+    """Standard Discord.py cog setup function for bot registration"""
     await bot.add_cog(Config(bot))

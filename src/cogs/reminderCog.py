@@ -13,6 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 class ReminderCog(commands.Cog):
+    """
+    Core reminder management commands with consistent validation patterns.
+    All commands follow: account check → reminder existence check → validation → database operation.
+    """
+
     def __init__(self, bot):
         self.bot = bot
         self.embeds_no_account = discord.Embed(
@@ -112,16 +117,23 @@ class ReminderCog(commands.Cog):
         name="remindme", description="Remind yourself about something later."
     )
     async def remind_me(self, interaction: discord.Interaction):
+        """
+        Open reminder creation modal after account validation.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
             )
             return
 
+        # Open modal for comprehensive reminder input
         await interaction.response.send_modal(RemindMeModal())
 
     @app_commands.command(name="setmsg", description="Edit your reminder message.")
     async def set_message(self, interaction: discord.Interaction, reminder_name: str):
+        """
+        Edit reminder message using modal for multi-line text input.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -134,12 +146,16 @@ class ReminderCog(commands.Cog):
             )
             return
 
+        # Modal provides multi-line text input
         await interaction.response.send_modal(SetMsgModal(reminder_name))
 
     @app_commands.command(name="settime", description="Set the time for a reminder.")
     async def set_time(
         self, interaction: discord.Interaction, reminder_name: str, time: str
     ):
+        """
+        Update reminder time with validation.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -180,6 +196,10 @@ class ReminderCog(commands.Cog):
     async def set_date(
         self, interaction: discord.Interaction, reminder_name: str, date: str = ""
     ):
+        """
+        Update reminder date with optional parameter defaulting to today.
+        Empty string convenience allows users to quickly set reminder to today.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -192,6 +212,7 @@ class ReminderCog(commands.Cog):
             )
             return
 
+        # Auto-fill today's date for user convenience
         if date == "":
             date = datetime.now().strftime("%d/%m/%Y")
         if not Reminder.validate_date(date):
@@ -224,6 +245,9 @@ class ReminderCog(commands.Cog):
     async def set_name(
         self, interaction: discord.Interaction, reminder_name: str, new_name: str
     ):
+        """
+        Rename a reminder with unique name constraint validation.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -260,6 +284,10 @@ class ReminderCog(commands.Cog):
     async def set_intervals(
         self, interaction: discord.Interaction, reminder_name: str, intervals: str
     ):
+        """
+        Update reminder intervals with complex format validation.
+        Supports both regular (e10m2h1d) and weekly (w:mon,tue,fri) patterns.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -302,6 +330,9 @@ class ReminderCog(commands.Cog):
     async def delete_reminder(
         self, interaction: discord.Interaction, reminder_name: str
     ):
+        """
+        Permanently delete a reminder.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -337,6 +368,10 @@ class ReminderCog(commands.Cog):
     async def set_reminder_status(
         self, interaction: discord.Interaction, reminder_name: str
     ):
+        """
+        Toggle reminder active status between enabled/disabled states.
+        Provides quick way to temporarily pause reminders without deletion.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -369,4 +404,5 @@ class ReminderCog(commands.Cog):
 
 
 async def setup(bot):
+    """Standard Discord.py cog setup function for reminder management commands"""
     await bot.add_cog(ReminderCog(bot))

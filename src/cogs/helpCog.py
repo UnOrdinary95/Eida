@@ -4,18 +4,27 @@ from discord.ext import commands
 
 
 class Help(commands.Cog):
+    """
+    Help system providing comprehensive command documentation.
+    Single command that displays all bot functionality with examples.
+    """
+    
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command(name="eida", description="Get a list of commands")
     async def help(self, interaction: discord.Interaction):
+        """
+        Display comprehensive help documentation with structured sections.
+        Named 'eida' instead of 'help' to avoid conflicts with other's bot built-in help.
+        """
         embed = discord.Embed(
             title="Eida - Reminder Bot Commands",
             description="Here's a comprehensive guide to all available commands and syntax:",
             color=0x5865F2,
         )
 
-        # Intervals section
+        # Intervals section - most complex feature, shown first for reference
         embed.add_field(
             name="⏰ Intervals Syntax",
             value=(
@@ -30,17 +39,17 @@ class Help(commands.Cog):
             inline=False,
         )
 
-        # Account management
+        # Account management - prerequisite commands shown early
         embed.add_field(
             name="👤 Account Management",
             value=(
                 "`/c` - Create account\n"
                 "`/settimezone {TIMEZONE}` - Set your timezone"
             ),
-            inline=True,
+            inline=True, 
         )
 
-        # Basic reminder commands
+        # Basic reminder commands - core functionality
         embed.add_field(
             name="➕ Add Reminders",
             value=(
@@ -50,7 +59,7 @@ class Help(commands.Cog):
             inline=True,
         )
 
-        # Modify reminders
+        # Modify reminders - grouped editing commands
         embed.add_field(
             name="✏️ Modify Reminders",
             value=(
@@ -63,7 +72,7 @@ class Help(commands.Cog):
             inline=False,
         )
 
-        # Management commands
+        # Management commands - control operations
         embed.add_field(
             name="🔧 Management",
             value=(
@@ -73,7 +82,7 @@ class Help(commands.Cog):
             inline=True,
         )
 
-        # Dashboard commands
+        # Dashboard commands - viewing and inspection
         embed.add_field(
             name="📊 Dashboard",
             value=(
@@ -85,12 +94,13 @@ class Help(commands.Cog):
             inline=True,
         )
 
-        # Footer with additional info
+        # Footer with user guidance and bot branding
         embed.set_footer(
             text="💡 Tip: Use descriptive names for your reminders to easily manage them!",
             icon_url=self.bot.user.avatar.url if self.bot.user.avatar else None,
         )
 
+        # Thumbnail for visual appeal and bot recognition
         embed.set_thumbnail(
             url=self.bot.user.avatar.url if self.bot.user.avatar else None
         )
@@ -99,4 +109,5 @@ class Help(commands.Cog):
 
 
 async def setup(bot):
+    """Standard Discord.py cog setup function"""
     await bot.add_cog(Help(bot))

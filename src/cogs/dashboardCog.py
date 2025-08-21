@@ -7,6 +7,10 @@ from src.database.ReminderDAO import ReminderDAO
 
 
 class Dashboard(commands.Cog):
+    """
+    Dashboard commands for viewing and managing user reminders.
+    """
+    
     def __init__(self, bot):
         self.bot = bot
         self.embeds_no_account = discord.Embed(
@@ -22,14 +26,20 @@ class Dashboard(commands.Cog):
         name="dashboard", description="Show your dashboard. option: active | inactive"
     )
     async def dashboard(self, interaction: discord.Interaction, option: str = None):
+        """
+        Display paginated reminder dashboard with optional filtering.
+        Three modes: all reminders, active only, or inactive only.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
             )
             return
 
+        # Match statement provides clean filtering logic
         match option:
             case None:
+                # Show all reminders regardless of status
                 dashboard_view = DashboardView(interaction.user.id)
                 content, current, total = dashboard_view.get_current_page_info()
 
@@ -42,6 +52,7 @@ class Dashboard(commands.Cog):
                     embed=embed, view=dashboard_view, ephemeral=True
                 )
             case "active":
+                # Filter to show only active reminders
                 dashboard_view = DashboardView(interaction.user.id, True)
                 content, current, total = dashboard_view.get_current_page_info()
 
@@ -54,6 +65,7 @@ class Dashboard(commands.Cog):
                     embed=embed, view=dashboard_view, ephemeral=True
                 )
             case "inactive":
+                # Filter to show only inactive reminders
                 dashboard_view = DashboardView(interaction.user.id, False)
                 content, current, total = dashboard_view.get_current_page_info()
 
@@ -68,6 +80,10 @@ class Dashboard(commands.Cog):
 
     @app_commands.command(name="showrm", description="Show a specific reminder.")
     async def show_reminder(self, interaction: discord.Interaction, reminder_name: str):
+        """
+        Display detailed information about a specific reminder.
+        Shows all reminder properties in human-readable format.
+        """
         if not AccountDAO.account_exists(interaction.user.id):
             await interaction.response.send_message(
                 embed=self.embeds_no_account, ephemeral=True
@@ -81,6 +97,7 @@ class Dashboard(commands.Cog):
             )
             return
 
+        # Format reminder details with human-readable interval description
         embed = discord.Embed(
             title=reminder_name,
             description=f"--------------------------------------------------\nDate : {reminder.date}\nTime : {reminder.time}\nInterval : {self.parse_interval_to_human(reminder.intervals)}\nStatus : {'Active' if reminder.status else 'Inactive'}\n--------------------------------------------------\n{reminder.message if reminder.message else 'No description'}",
@@ -184,5 +201,7 @@ class Dashboard(commands.Cog):
 
 
 async def setup(bot):
+    """Setup function for Dashboard cog registration"""
     await bot.add_cog(Dashboard(bot))
+    # Register persistent view for bot restart compatibility
     bot.add_view(DashboardView(discord_uid=None))
