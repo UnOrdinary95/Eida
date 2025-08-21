@@ -5,7 +5,7 @@
     Eida
     <br>
 </h1>
----
+
 <h4 align="center">A minimalist discord bot reminder built with 
     <a href="https://discordpy.readthedocs.io/en/stable/" target="_blank">discord.py</a>.
 </h4>
