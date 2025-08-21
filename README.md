@@ -65,3 +65,5 @@ None
 ## License
 
 MIT
+
+> Disclaimer : This project was created for personal use, so data is not encrypted.
