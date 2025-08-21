@@ -22,7 +22,7 @@
 <div align="center">
     <img src="images/help.png" width="45%">
     <img src="images/remindme.png" width="45%">
-<div>
+</div>
 
 ## Key Features
 
